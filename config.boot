@@ -1,14 +1,29 @@
 interfaces {
     ethernet eth0 {
         hw-id "00:0c:29:c0:0e:6c"
+        ipv6 {
+            address {
+                no-default-link-local
+            }
+        }
     }
     ethernet eth1 {
         hw-id "00:0c:29:c0:0e:76"
+        ipv6 {
+            address {
+                no-default-link-local
+            }
+        }
     }
     ethernet eth2 {
         address "172.30.255.1/30"
         description "OPN_TRANSIT"
         hw-id "00:0c:29:c0:0e:80"
+        ipv6 {
+            address {
+                no-default-link-local
+            }
+        }
     }
     loopback lo {
     }
@@ -235,6 +250,9 @@ system {
         }
     }
     host-name "vyos"
+    ipv6 {
+        disable-forwarding
+    }
     login {
         user vyos {
             authentication {
@@ -259,4 +277,4 @@ system {
 
 
 // Warning: Do not remove the following line.
-// vyos-config-version: "bgp@4:broadcast-relay@1:cluster@2:config-management@1:conntrack@3:conntrack-sync@2:container@1:dhcp-relay@2:dhcp-server@6:dhcpv6-server@1:dns-dynamic@3:dns-forwarding@4:firewall@13:flow-accounting@1:https@5:ids@1:interfaces@32:ipoe-server@1:ipsec@12:isis@3:l2tp@4:lldp@1:mdns@1:monitoring@1:nat@7:nat66@3:ntp@3:openconnect@2:ospf@2:pim@1:policy@7:pppoe-server@6:pptp@2:qos@2:quagga@11:rip@1:rpki@1:salt@1:snmp@3:ssh@2:sstp@4:system@26:vrf@3:vrrp@4:vyos-accel-ppp@2:wanload
+// vyos-config-version: "bgp@4:broadcast-relay@1:cluster@2:config-management@1:conntrack@3:conntrack-sync@2:container@1:dhcp-relay@2:dhcp-server@6:dhcpv6-se
