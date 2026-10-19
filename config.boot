@@ -1,5 +1,23 @@
+firewall {
+    ipv4 {
+        input {
+            filter {
+                rule 10 {
+                    action "accept"
+                    description "Allow SSH"
+                    destination {
+                        port "22"
+                    }
+                    protocol "tcp"
+                }
+            }
+        }
+    }
+}
 interfaces {
     ethernet eth0 {
+        address "194.93.24.92/28"
+        description "WAN1_UzOnline"
         hw-id "00:0c:29:c0:0e:6c"
         ipv6 {
             address {
@@ -25,6 +43,11 @@ interfaces {
             }
         }
     }
+    ethernet eth3 {
+        address "169.255.255.1/30"
+        description "GNL_Transit"
+        hw-id "00:0c:29:c0:0e:8a"
+    }
     loopback lo {
     }
     pppoe pppoe0 {
@@ -39,16 +62,19 @@ interfaces {
 }
 load-balancing {
     wan {
-        flush-connections
         interface-health eth0 {
+            failure-count "3"
             nexthop "194.93.24.81"
+            success-count "3"
             test 1 {
                 target "8.8.8.8"
                 type "ping"
             }
         }
         interface-health pppoe0 {
+            failure-count "3"
             nexthop "dhcp"
+            success-count "3"
             test 1 {
                 target "1.1.1.1"
                 type "ping"
@@ -166,9 +192,12 @@ nat {
                 address "82.215.69.184"
                 port "1202"
             }
+            inbound-interface {
+                name "pppoe0"
+            }
             protocol "udp"
             translation {
-                address "172.30.255.2"
+                address "169.255.255.2"
                 port "1202"
             }
         }
@@ -189,6 +218,30 @@ nat {
         rule 100 {
             outbound-interface {
                 name "pppoe0"
+            }
+            source {
+                address "172.16.0.0/12"
+            }
+            translation {
+                address "masquerade"
+            }
+        }
+        rule 110 {
+            description "OPNsense transit internet"
+            outbound-interface {
+                name "pppoe0"
+            }
+            source {
+                address "169.255.255.2/32"
+            }
+            translation {
+                address "masquerade"
+            }
+        }
+        rule 120 {
+            description "UzOnline WAN1 SNAT"
+            outbound-interface {
+                name "eth0"
             }
             source {
                 address "172.16.0.0/12"
@@ -277,4 +330,5 @@ system {
 
 
 // Warning: Do not remove the following line.
-// vyos-config-version: "bgp@4:broadcast-relay@1:cluster@2:config-management@1:conntrack@3:conntrack-sync@2:container@1:dhcp-relay@2:dhcp-server@6:dhcpv6-se
+// vyos-config-version: "bgp@4:broadcast-relay@1:cluster@2:config-management@1:conntrack@3:conntrack-sync@2:container@1:dhcp-relay@2:dhcp-server@6:dhcpv6-server@1:dns-dynamic@3:dns-forwarding@4:firewall@13:flow-accounting@1:https@5:ids@1:interfaces@32:ipoe-server@1:ipsec@12:isis@3:l2tp@4:lldp@1:mdns@1:monitoring@1:nat@7:nat66@3:ntp@3:openconnect@2:ospf@2:pim@1:policy@7:pppoe-server@6:pptp@2:qos@2:quagga@11:rip@1:rpki@1:salt@1:snmp@3:ssh@2:sstp@4:system@26:vrf@3:vrrp@4:vyos-accel-ppp@2:wanloadbalance@3:webproxy@2"
+// Release version: 1.4.0-rc1
